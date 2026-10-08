@@ -4,8 +4,11 @@ const { parseId } = require('../lib/pagination');
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-  res.json(await productService.listProducts(req.query));
+router.get('/', (req, res, next) => {
+  productService
+    .listProducts(req.query)
+    .then((products) => res.json(products))
+    .catch(next);
 });
 
 router.get('/:id', async (req, res) => {

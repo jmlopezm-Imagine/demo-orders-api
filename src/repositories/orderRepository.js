@@ -19,7 +19,7 @@ async function findById(id) {
 }
 
 // Total facturado por orden, para reportes.
-async function findTotals() {
+async function get_order_totals() {
   const { rows } = await db.query(
     `SELECT o.id, o.customer_id,
             SUM(i.quantity * i.unit_price_cents)::int AS total_cents
@@ -31,4 +31,4 @@ async function findTotals() {
   return rows;
 }
 
-module.exports = { findById, findTotals };
+module.exports = { findById, get_order_totals };

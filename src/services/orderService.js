@@ -20,7 +20,7 @@ async function listOrders({ limit, offset }) {
     [limit, offset],
   );
 
-  const result = [];
+  const order_list = [];
   for (const order of orders) {
     const { rows: customers } = await db.query(
       'SELECT id, name, email FROM customers WHERE id = $1',
@@ -31,17 +31,17 @@ async function listOrders({ limit, offset }) {
       [order.id],
     );
 
-    const itemDtos = items.map(toItemDto);
-    result.push({
+    const item_dtos = items.map(toItemDto);
+    order_list.push({
       id: order.id,
       status: order.status,
       createdAt: order.created_at,
       customer: customers[0],
-      items: itemDtos,
-      totalCents: totalOf(itemDtos),
+      items: item_dtos,
+      totalCents: totalOf(item_dtos),
     });
   }
-  return result;
+  return order_list;
 }
 
 async function getOrder(id) {

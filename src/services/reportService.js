@@ -30,11 +30,11 @@ function rankCustomersByRevenue(orderTotals, customers, limit) {
 }
 
 async function topCustomers({ limit }) {
-  const [customers, orderTotals] = await Promise.all([
-    customerRepository.findAll(),
-    orderRepository.findTotals(),
+  const [customer_list, order_totals] = await Promise.all([
+    customerRepository.fetchAll(),
+    orderRepository.get_order_totals(),
   ]);
-  return rankCustomersByRevenue(orderTotals, customers, limit);
+  return rankCustomersByRevenue(order_totals, customer_list, limit);
 }
 
 module.exports = { topCustomers, rankCustomersByRevenue };
