@@ -2,7 +2,7 @@
   "name": "demo-orders-api",
   "version": "1.0.0",
   "private": true,
-  "description": "API de órdenes para el workshop de Claude Code CLI",
+  "description": "API REST de clientes, productos y órdenes",
   "main": "src/server.js",
   "engines": {
     "node": ">=20"
