@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const productService = require('../services/productService');
-const { parsePagination, parseId } = require('../lib/pagination');
+const { parseId } = require('../lib/pagination');
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-  res.json(await productService.listProducts(parsePagination(req.query)));
+  res.json(await productService.listProducts(req.query));
 });
 
 router.get('/:id', async (req, res) => {

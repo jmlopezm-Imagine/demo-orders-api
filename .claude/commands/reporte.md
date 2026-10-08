@@ -1,41 +1,36 @@
 ---
-description: Genera REPORTE.md de esta corrida del reto (uso: /reporte <corrida 1|2> <hora de inicio HH:MM>)
-argument-hint: <corrida 1|2> <hora_inicio HH:MM>
+description: Genera REPORTE.md del reto con métricas reales de esta sesión
 disable-model-invocation: true
 ---
 
-Genera el archivo REPORTE.md en la raíz del repo con EXACTAMENTE el formato de abajo, usando lo que hicimos en esta sesión.
+Genera el archivo `REPORTE.md` en la raíz del repo con EXACTAMENTE el formato de abajo.
 
-Argumentos recibidos: $ARGUMENTS
-(el primero es el número de corrida, el segundo la hora de inicio)
-
-Reglas:
-- No inventes. Si no tienes un dato, escribe "no disponible".
-- Obtén los valores corriendo: `git branch --show-current`, `claude --version`, `date +%H:%M` y los tests del proyecto.
-- `rama_base` es sin-contexto si la rama actual es reto-sin, y con-contexto si es reto-con.
-- Deja la sección 7 exactamente como está: la escribe el estudiante.
-
-Formato:
+Pasos:
+1. Corre `node scripts/session-stats.js`. Sus números son **reales** (salen del registro de esta sesión): cópialos TAL CUAL en el frontmatter, sin redondear ni corregir.
+2. Corre `git branch --show-current`, `claude --version` y `git diff --stat`.
+3. Completa las secciones con lo que hicimos en esta sesión. No inventes: si no tienes un dato, escribe "no disponible".
+4. Deja la sección 7 exactamente como está: la escribe el estudiante.
+5. Escribe el archivo completo en una sola escritura.
 
 ```markdown
 ---
-rama_base: <sin-contexto | con-contexto>
-corrida: <1 | 2>
-hora_inicio: <HH:MM>
-hora_fin: <HH:MM>
+rama: <salida de git branch --show-current>
 claude_code_version: <versión>
-leyo_claude_md: <sí | no | no había>
-tiempo_test_antes_ms: <ms del test que fallaba, antes del cambio>
-tiempo_test_despues_ms: <ms del mismo test, después del cambio>
+claude_md_presente: <de session-stats>
+duracion_segundos: <de session-stats>
+pasos_del_agente: <de session-stats>
+tokens_generados: <de session-stats>
+tokens_de_contexto_leidos: <de session-stats>
+comandos_ejecutados: <de session-stats>
+corridas_de_tests: <de session-stats>
+archivos_modificados: <de session-stats>
 tests_antes: { pass: <n>, fail: <n> }
 tests_despues: { pass: <n>, fail: <n> }
-veces_que_corrio_tests: <n>
-archivos_modificados: [<rutas>]
 modifico_tests_existentes: <sí | no>
 ---
 
 ## 1. Análisis corto del sistema
-Máximo 5 líneas: qué hace el sistema, cómo está organizado (capas) y dónde vive el código del bug.
+Máximo 5 líneas: qué hace el sistema, cómo está organizado y dónde vive el código del bug.
 
 ## 2. Evidencia del bug
 Comando que se corrió antes de cambiar nada y su salida relevante.
@@ -44,13 +39,13 @@ Comando que se corrió antes de cambiar nada y su salida relevante.
 2-3 líneas, con archivo y función.
 
 ## 4. Plan y cambios
-Qué propusiste antes de editar y qué cambiaste al final, archivo por archivo.
+Qué se propuso antes de editar y qué cambió al final, archivo por archivo.
 
 ## 5. Validación
 Salida de los tests después del cambio. Antes vs. después.
 
 ## 6. Reglas del proyecto
-Qué reglas seguiste (del CLAUDE.md o deducidas del código) y cuáles supusiste.
+Qué reglas se siguieron (del CLAUDE.md o deducidas del código), cuáles se supusieron y qué partes del código parecían contradecirse.
 
 ## 7. Opinión personal
 _(Escribe aquí: qué le corregiste al agente, qué le faltó y cómo te pareció.)_
@@ -58,4 +53,4 @@ _(Escribe aquí: qué le corregiste al agente, qué le faltó y cómo te pareci�
 
 Al terminar, muestra el archivo y recuérdale al estudiante dos cosas:
 1. Completar la sección 7.
-2. Guardar la corrida con `git add -A && git commit -m "reto: corrida <n>"` (solo local, sin push).
+2. Subir `REPORTE.md` al formulario de feedback de la sesión ("Coloca aquí el entregable"). Si no acepta `.md`, como `.docx`.

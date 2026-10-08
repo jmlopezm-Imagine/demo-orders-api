@@ -31,3 +31,9 @@ La API queda en http://localhost:3100 y Postgres en el puerto 5433, para no choc
 ```bash
 npm test
 ```
+
+## Notas de desarrollo
+
+- El esquema de la base de datos está en `db/schema.sql`.
+- Para cambios de esquema: actualiza `db/schema.sql` y corre `npm run migrate`.
+- Los precios se muestran con el helper de `src/legacy/money.js`.
