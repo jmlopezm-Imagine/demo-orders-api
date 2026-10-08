@@ -12,6 +12,7 @@
     "db:migrate": "node scripts/migrate.js",
     "db:seed": "node scripts/seed.js",
     "db:setup": "npm run db:migrate && npm run db:seed",
+    "db:reset": "node scripts/reset.js && npm run db:setup",
     "test": "node --test",
     "test:unit": "node --test test/unit/pagination.test.js test/unit/reportService.test.js",
     "test:integration": "node --test test/integration/customers.test.js test/integration/orders.test.js"
