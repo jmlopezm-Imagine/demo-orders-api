@@ -42,6 +42,7 @@ _(Escrita por el estudiante)_
 Reglas:
 - Llena la tabla solo con datos de los reportes. Si falta uno, escribe "no disponible".
 - Copia los reportes **sin modificarlos**.
+- Escribe el archivo **completo en una sola escritura**, con los dos reportes ya copiados. No uses marcadores para reemplazar después.
 - No escribas nada en "Mi comparación": es del estudiante.
 - No hagas commit de este archivo.
 
