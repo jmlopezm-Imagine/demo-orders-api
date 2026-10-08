@@ -11,6 +11,7 @@ API REST de clientes, productos y órdenes.
 
 ```bash
 npm install
+docker pull postgres:16-alpine   # imagen de la base de datos (solo la primera vez)
 docker compose up -d
 npm run db:setup
 npm start
