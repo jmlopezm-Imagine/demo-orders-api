@@ -1,0 +1,115 @@
+# Engineering Model v0 — demo-orders-api
+# Fuente de verdad estructurada del proyecto. CLAUDE.md y docs/architecture.md
+# se derivan de este archivo: si cambian las reglas, se cambian aquí primero.
+model_version: 0.1
+status: experimental
+
+project:
+  name: demo-orders-api
+  type: api
+  description: API REST de clientes, productos y órdenes.
+  repositories:
+    - name: demo-orders-api
+      role: backend
+
+stack:
+  runtime: node >=20
+  language: javascript (commonjs)
+  framework: express 5
+  database: postgres 16
+  orm: none            # SQL plano con pg
+  test_runner: node:test
+
+architecture:
+  style: layered
+  layers:
+    - name: routes
+      path: src/routes/
+      responsibility: HTTP; parseo y validación de parámetros; sin lógica de negocio
+      may_depend_on: [services, lib]
+    - name: services
+      path: src/services/
+      responsibility: lógica de negocio y armado de DTOs
+      may_depend_on: [repositories, lib]
+    - name: repositories
+      path: src/repositories/
+      responsibility: único lugar con SQL y acceso a datos
+      may_depend_on: [db]
+    - name: db
+      path: src/db/
+      responsibility: pool de conexiones e instrumentación de queries
+  rules:
+    - id: data-access-via-repositories
+      status: standard
+      rule: Solo src/repositories/ importa src/db/ o escribe SQL.
+    - id: thin-routes
+      status: standard
+      rule: Las rutas no contienen lógica de negocio.
+
+  conventions:
+    - id: camelcase-everywhere
+      status: standard
+      rule: camelCase en variables, funciones y propiedades JS.
+    - id: repositories-return-camelcase
+      status: standard
+      rule: Repositorios devuelven camelCase usando toCamel (src/lib/case.js).
+    - id: repository-naming
+      status: standard
+      rule: findById, findPage, findAll.
+    - id: routes-async-errors
+      status: standard
+      rule: Rutas async; errores con lib/errors.
+  known_debt:
+    - path: src/services/ (algunos services antiguos)
+      issue: acceso a datos directo
+      rule: no copiar; lo nuevo va en repositories/
+  deprecated:
+    - path: src/utils/paginate.js
+      use_instead: src/lib/pagination.js
+    - path: src/legacy/
+      rule: no modificar ni usar en código nuevo
+
+data:
+  engine: postgres
+  schema_source: sql/migrations/
+  migrations:
+    tool: scripts/migrate.js
+    rules:
+      - id: migrations-append-only
+        status: standard
+        rule: Nunca editar una migración existente; agregar NNN_descripcion.sql nueva.
+      - id: schema-dump-obsolete
+        status: standard
+        rule: db/schema.sql es un dump viejo; no editar ni usar como referencia.
+  entities: [customers, products, orders, order_items]
+
+quality:
+  commands:
+    test: npm test
+    unit: npm run test:unit
+    integration: npm run test:integration
+  rules:
+    - id: change-requires-passing-tests
+      status: standard
+      rule: Un cambio está terminado solo si npm test pasa completo.
+    - id: no-weakening-tests
+      status: standard
+      rule: No modificar umbrales ni aserciones de tests existentes para hacerlos pasar.
+
+infrastructure:
+  local: docker compose (postgres en 5433, API en 3100)
+  setup: [docker compose up -d, npm run db:setup]
+  run: npm start
+  reset: npm run db:reset
+
+documentation:
+  architecture: docs/architecture.md
+
+agents:
+  context_files: [CLAUDE.md]
+  must_not_modify:
+    - sql/migrations/001_schema.sql
+    - db/schema.sql
+    - src/legacy/
+    - test/                 # se pueden agregar tests, no debilitar los existentes
+  validation: npm test
