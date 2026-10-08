@@ -16,7 +16,7 @@ npm run db:setup
 npm start
 ```
 
-La API queda en http://localhost:3000.
+La API queda en http://localhost:3100 y Postgres en el puerto 5433, para no chocar con servicios locales en 3000/5432. Se cambian con `PORT` y `DATABASE_URL` (ver `.env.example`).
 
 ## Endpoints
 
