@@ -1,5 +1,6 @@
 // Métricas reales de la sesión actual de Claude Code, leídas del registro local
 // (~/.claude/projects/<carpeta>/<sesión>.jsonl). Las usa el comando /reporte.
+const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -32,7 +33,6 @@ let start = null;
 let end = null;
 const usageByMessage = new Map();
 const tools = {};
-const edited = new Set();
 let commands = 0;
 let testRuns = 0;
 
@@ -50,14 +50,23 @@ for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
     if (!c || c.type !== 'tool_use') continue;
     tools[c.name] = (tools[c.name] || 0) + 1;
     const input = c.input || {};
-    if (['Edit', 'Write', 'MultiEdit'].includes(c.name) && input.file_path) {
-      edited.add(path.relative(process.cwd(), input.file_path));
-    }
     if (c.name === 'Bash') {
       commands += 1;
       if (/npm (run )?test|node --test/.test(input.command || '')) testRuns += 1;
     }
   }
+}
+
+// Archivos cambiados según git (incluye los creados con comandos), sin REPORTE.md.
+let changed = [];
+try {
+  changed = execSync('git status --porcelain', { encoding: 'utf8' })
+    .split('\n')
+    .filter(Boolean)
+    .map((l) => l.slice(3).trim())
+    .filter((f) => f !== 'REPORTE.md');
+} catch {
+  changed = ['no disponible'];
 }
 
 let output = 0;
@@ -75,6 +84,6 @@ console.log(JSON.stringify({
   tokens_de_contexto_leidos: context,
   comandos_ejecutados: commands,
   corridas_de_tests: testRuns,
-  archivos_modificados: [...edited],
+  archivos_modificados: changed,
   herramientas: tools,
 }, null, 2));
